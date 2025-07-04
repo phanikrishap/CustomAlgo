@@ -1,0 +1,44 @@
+{
+  "kite_credentials": {
+    "api_key": "6g794lmwuo1wdmr7",
+    "api_secret": "hrof7sxzmow48d7snklkt6eekhgw0869",
+    "user_id": "XO3253",
+    "password": "lakshmibala777",
+    "totp_secret": "3YESDFJ2CRJ2BAXMHLZFEKMEVU3TCLHU",
+    "local_port": 8001,
+    "redirect_url": "http://127.0.0.1:8001/callback",
+    "access_token": null,
+    "access_token_time": null
+  },
+  "instruments": [
+    {
+      "token": 408065,
+      "symbol": "RELIANCE",
+      "mode": "ltp"
+    },
+    {
+      "token": 884737,
+      "symbol": "INFY",
+      "mode": "quote"
+    }
+  ],
+  "websocket_settings": {
+    "endpoint": "wss://ws.kite.trade",
+    "auto_reconnect": true,
+    "reconnect_interval": 5000,
+    "max_reconnect_attempts": 10,
+    "ping_interval": 30000
+  },
+  "token_settings": {
+    "auto_refresh": true,
+    "expiration_hours": 6,
+    "max_retries": 3,
+    "cache_tokens": true
+  },
+  "logging": {
+    "level": "Info",
+    "file_path": "Logs/kite_algo.log",
+    "max_file_size": "10MB",
+    "backup_count": 5
+  }
+}

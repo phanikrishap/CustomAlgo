@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <StartupObject>CustomAlgo.Demo.CustomAlgoDemo</StartupObject>
+    <AssemblyTitle>Kite Range Algo</AssemblyTitle>
+    <AssemblyDescription>Automated Zerodha Kite WebSocket Range Bar Generator</AssemblyDescription>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Copyright>Copyright © 2024</Copyright>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.17" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\broker_config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Authentication\AutomatedTokenCapture.cs" />
+    <Compile Include="Authentication\BrokerTokenManager.cs" />
+    <Compile Include="Authentication\TokenConfiguration.cs" />
+    <Compile Include="Authentication\ZerodhaTokenService.cs" />
+    <Compile Include="Config\BrokerConfiguration.cs" />
+    <Compile Include="Demo\CustomAlgoDemo.cs" />
+    <Compile Include="Demo\TokenTestOnly.cs" />
+    <Compile Include="Models\TickData.cs" />
+    <Compile Include="Utilities\TimeHelper.cs" />
+    <Compile Include="WebSocket\KiteWebSocketClient.cs" />
+  </ItemGroup>
+
+</Project>
