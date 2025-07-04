@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using log4net;
-namespace CustomAlgo.Authentication
+namespace CustomAlgo.Zerodha.Authentication
 {
     /// <summary>
     /// Main service for automated Zerodha token generation using the standalone ZerodhaTokenGenerator DLL

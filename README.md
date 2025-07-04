@@ -1,6 +1,6 @@
 # Kite Range Algo
 
-A comprehensive C# application that connects to Zerodha Kite WebSocket feed and constructs Range bars using automated token generation.
+A comprehensive C# application that connects to Zerodha Kite WebSocket feed and constructs Range bars using automated token generation with advanced date-based token validation and IST timezone support.
 
 ## Project Structure
 
@@ -20,8 +20,27 @@ customALgo/
 │   └── TickData.cs             # Tick data and OHLC models
 ├── RangeBars/                  # Range bar construction logic
 │   └── PRange.cs               # Original NinjaTrader P_Range implementation
+├── Zerodha/                    # Zerodha-specific modules and services
+│   ├── Authentication/      # Token automation and authentication
+│   │   ├── AutomatedTokenCapture.cs    # HTTP-based login automation
+│   │   ├── TokenConfiguration.cs      # Token configuration model
+│   │   ├── ZerodhaTokenService.cs      # Token service implementation
+│   │   └── BrokerTokenManager.cs      # High-level token management
+│   ├── Instruments/         # Instruments data management
+│   │   ├── InstrumentData.cs        # Instrument entity model
+│   │   ├── InstrumentsDbContext.cs  # SQLite database context
+│   │   └── InstrumentsService.cs    # Instruments fetching service
+│   └── WebSocket/           # WebSocket connectivity
+│       └── KiteWebSocketClient.cs  # Kite WebSocket client implementation
 ├── Demo/                       # Demo and testing applications
-│   └── CustomAlgoDemo.cs    # Complete demo application
+│   ├── CustomAlgoDemo.cs    # Complete demo application
+│   ├── TokenTestOnly.cs     # Token validation and testing utility
+│   ├── InstrumentsDemo.cs   # Instruments fetching and storage demo
+│   └── KiteRangeAlgoDemo.cs # Range algo demo application
+├── Utilities/                  # Utility classes and helpers
+│   └── TimeHelper.cs        # IST timezone utilities and market time functions
+├── Data/                       # SQLite database storage
+│   └── instruments.db       # Instruments database (auto-created)
 └── Logs/                       # Log files (created at runtime)
 ```
 
@@ -30,12 +49,19 @@ customALgo/
 ### ✅ Implemented
 - **Complete Token Automation**: Zero manual intervention with TOTP 2FA
 - **HTTP-Only Authentication**: No WebView2 dependencies
+- **Date-Based Token Validation**: Automatic daily token refresh using IST timezone
+- **Instruments Data Management**: Automated fetching and SQLite storage of NSE/BSE instruments
+- **Smart Masters Refresh**: Daily instruments update with configuration tracking
+- **Advanced Time Management**: Consistent IST timezone handling with market hours support
 - **WebSocket Connectivity**: Real-time tick data from Kite Connect
 - **Multi-Instrument Support**: Configurable subscriptions (LTP/Quote/Full)
 - **Auto-Reconnection**: Handles connection drops with exponential backoff
+- **SQLite Database**: Optimized storage with indexes for fast instrument lookups
 - **Comprehensive Logging**: Production-ready monitoring and debugging
 - **Token Caching**: Automatic refresh with expiration management
 - **Security**: Masks sensitive data in logs and output
+- **Configuration Management**: Source file synchronization and validation
+- **Testing Framework**: Comprehensive validation tests for all components
 
 ### 🔄 In Progress
 - Range bar construction logic porting
@@ -59,13 +85,101 @@ customALgo/
    }
    ```
 
-### 2. Run Demo
+### 2. Run Token Validation Test
 ```bash
-cd Demo
-dotnet run CustomAlgoDemo.cs
+# Test token automation and validation
+dotnet run --project KiteRangeAlgo.csproj
+# or specifically run token tests
+dotnet run TokenTestOnly.cs
 ```
 
-### 3. Expected Output
+### 3. Run Instruments Demo
+```bash
+# Test instruments fetching and storage
+dotnet run InstrumentsDemo.cs
+```
+
+### 4. Run Full Demo
+```bash
+# Complete broker login and WebSocket demo
+dotnet run KiteRangeAlgoDemo.cs
+```
+
+### 5. Expected Output
+
+#### Token Validation Test Output
+```
+🔑 Token Automation Test
+========================================
+🕐 Current IST Time: 2025-07-04 17:11:45 IST
+📈 Market Status: Market CLOSED - Opens in 16h 3m
+
+🧪 TokenConfiguration Validation Tests
+========================================
+Test 1: Valid TokenConfiguration
+✅ IsTokenExpired: False
+✅ Masked String: ApiKey: test...3456, UserId: TEST001, LocalPort: 8001, HasToken: True, TokenExpired: False
+✅ PASSED - Valid configuration accepted
+
+Test 2: Token Generated Today (Same Date)
+✅ Token generated 2 hours ago (same day) - IsExpired: False
+✅ PASSED - Token from same date should not be expired due to date
+
+Test 3: Token Generated Yesterday (Different Date)
+✅ Token generated yesterday - IsExpired: True
+✅ PASSED - Token from different date should be expired
+
+🎯 Test Results: 7/7 tests passed
+🎉 All TokenConfiguration validation tests PASSED!
+
+📍 Using config file: /full/path/to/Config/broker_config.json
+✅ Configuration loaded: API Key: 6g79...dmr7, User ID: XO3253, Instruments: 2
+✅ Access token obtained: Isxst2...ejwTn6
+```
+
+#### Instruments Demo Output
+```
+📊 Kite Instruments Demo
+========================================
+🕐 Current IST Time: 2025-07-04 17:15:30 IST
+📈 Market Status: Market CLOSED - Opens in 16h 0m
+
+📍 Using config file: /full/path/to/Config/broker_config.json
+✅ Configuration loaded: API Key: 6g79...dmr7, User ID: XO3253, Instruments: 2
+✅ Access token obtained: Isxst2...ejwTn6
+✅ Instruments service initialized with configuration integration
+
+🔍 Checking if data refresh is needed...
+📅 Current masters time: null
+📅 Is masters refreshed: false
+✅ Needs refresh: true
+
+📥 Fetching NSE instruments...
+✅ Stored 2,500 NSE instruments
+📥 Fetching BSE instruments...
+✅ Stored 4,200 BSE instruments
+✅ Configuration updated with latest masters time
+
+📈 Database Statistics:
+  NSE: 2,500 instruments
+  BSE: 4,200 instruments
+  Total: 6,700 instruments
+
+🔍 Search Examples:
+  Searching for 'RELIANCE':
+    RELIANCE - Reliance Industries Limited [EQ] (Token: 738561)
+    
+  Searching for 'INFY':
+    INFY - Infosys Limited [EQ] (Token: 408065)
+
+🎯 Getting instrument by token 738561:
+    Found: RELIANCE (NSE) - Reliance Industries Limited [EQ]
+    Last Price: ₹2847.50
+    Is Equity: true
+    Is Derivative: false
+```
+
+#### Full Demo Output
 ```
 🚀 Kite Range Algo - Broker Login and WebSocket Demo
 ============================================================
@@ -85,6 +199,67 @@ dotnet run CustomAlgoDemo.cs
 📈 Tick #10: RELIANCE: 2847.50 @ 14:23:45.123
 ```
 
+## Recent Updates & Improvements
+
+### 🚀 Latest Features (July 2025)
+
+#### Date-Based Token Validation
+- **Smart Daily Refresh**: Tokens automatically expire and regenerate if generated on a different date (using IST timezone)
+- **Market-Aware Timing**: Integration with Indian market hours (9:15 AM - 3:30 PM IST)
+- **Timezone Consistency**: All time operations now use IST via `TimeHelper.cs` utility class
+- **Backward Compatibility**: Time-based expiration (6 hours) remains as fallback for same-day scenarios
+
+#### Enhanced Configuration Management
+- **Source File Synchronization**: Application now updates the source `Config/broker_config.json` file directly
+- **Path Resolution**: Automatic path resolution from runtime directory to source directory
+- **Real-time Verification**: Immediate verification of saved configuration data
+- **Debug Transparency**: Detailed logging shows exact file paths and operations
+
+#### Comprehensive Testing Framework
+- **TokenTestOnly.cs**: Dedicated test utility with 7 comprehensive validation scenarios:
+  1. Valid configuration validation
+  2. Same-date token validation (should not expire)
+  3. Different-date token validation (should expire)
+  4. Time-based expiration (6+ hours)
+  5. Invalid configuration handling (missing fields)
+  6. Port validation (boundary testing)
+  7. Token update functionality verification
+
+#### Improved Error Handling
+- **Null Reference Safety**: Enhanced null checking in `BrokerTokenManager`
+- **Graceful Failures**: Better exception handling with detailed logging
+- **Configuration Validation**: Comprehensive validation with specific error messages
+
+### 🔧 Technical Improvements
+
+#### TimeHelper Utility
+```csharp
+// Market status checking
+TimeHelper.IsMarketOpen()          // Returns true if NSE is open
+TimeHelper.GetMarketStatus()        // Human-readable market status
+TimeHelper.NowIST                   // Current time in IST
+TimeHelper.FormatIST(dateTime)      // Consistent IST formatting
+```
+
+#### Enhanced Token Configuration
+```csharp
+// Date-based validation
+public bool IsTokenExpired()
+{
+    // Check date first (IST timezone)
+    if (tokenGeneratedIST.Date != currentIST.Date)
+        return true;
+    
+    // Then check time-based expiration
+    return currentIST - tokenGeneratedIST > TokenExpirationTime;
+}
+```
+
+#### Configuration File Management
+- **Automatic Source Updates**: No more manual copying between development and runtime files
+- **Real-time Persistence**: Token updates immediately reflected in source configuration
+- **Cross-Platform Paths**: Robust path handling for different development environments
+
 ## Dependencies
 
 - **System.Net.WebSockets**: WebSocket client functionality
@@ -92,6 +267,9 @@ dotnet run CustomAlgoDemo.cs
 - **log4net**: Comprehensive logging framework
 - **System.Net.Http**: HTTP requests for authentication
 - **System.Security.Cryptography**: TOTP generation
+- **Microsoft.EntityFrameworkCore**: Object-relational mapping framework
+- **Microsoft.EntityFrameworkCore.Sqlite**: SQLite database provider
+- **Microsoft.EntityFrameworkCore.Design**: Database design-time tools
 
 ## Architecture
 
@@ -110,6 +288,14 @@ dotnet run CustomAlgoDemo.cs
 4. Parse incoming binary tick data
 5. Convert to OHLC format for range bar processing
 6. Handle reconnection and error scenarios
+
+### Instruments Management Flow
+1. Check `instrument_masters_time` in configuration using IST timezone
+2. If null or different date, fetch fresh instruments from Kite Connect API
+3. Download and decompress gzipped CSV data for NSE, BSE, MCX, NFO exchanges
+4. Parse CSV data and store in SQLite database with optimized indexes
+5. Update `instrument_masters_time` in configuration file
+6. Provide fast search and lookup capabilities for trading operations
 
 ### Data Processing
 1. Receive real-time tick data from WebSocket
@@ -145,9 +331,18 @@ dotnet run CustomAlgoDemo.cs
 ```json
 "token_settings": {
   "auto_refresh": true,      // Automatically refresh expired tokens
-  "expiration_hours": 6,     // Token expiration time
+  "expiration_hours": 6,     // Token expiration time (fallback for same-day)
   "max_retries": 3,          // Maximum retry attempts
   "cache_tokens": true       // Cache tokens between sessions
+}
+```
+
+### Enhanced Features
+```json
+"kite_credentials": {
+  "access_token": "auto_generated_daily",           // Automatically updated
+  "access_token_time": "2025-07-04T17:11:45",      // IST timestamp
+  "instrument_masters_time": "2025-07-04T08:30:00" // Daily masters update timestamp
 }
 ```
 
@@ -164,11 +359,17 @@ dotnet run CustomAlgoDemo.cs
 |-----------|--------|-------------|
 | Configuration | ✅ Complete | JSON-based configuration with validation |
 | Authentication | ✅ Complete | Automated login with TOTP 2FA |
+| Token Management | ✅ Complete | Date-based validation with IST timezone |
+| Instruments Service | ✅ Complete | Automated NSE/BSE instruments fetching |
+| SQLite Database | ✅ Complete | Optimized storage with EF Core |
+| Masters Refresh | ✅ Complete | Daily instruments update tracking |
+| Time Utilities | ✅ Complete | Market hours and IST timezone handling |
 | WebSocket Client | ✅ Complete | Real-time data feed with reconnection |
 | Tick Data Models | ✅ Complete | Comprehensive data structures |
+| Testing Framework | ✅ Complete | Comprehensive validation tests |
+| Configuration Sync | ✅ Complete | Source file synchronization |
 | Range Bar Logic | 🔄 In Progress | Porting from NinjaTrader P_Range |
 | Integration | 🔄 In Progress | Connecting tick data to range bars |
-| Testing | ✅ Complete | Demo application with full workflow |
 
 ## Next Steps
 

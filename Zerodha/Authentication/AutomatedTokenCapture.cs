@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using log4net;
 
-namespace CustomAlgo.Authentication
+namespace CustomAlgo.Zerodha.Authentication
 {
     /// <summary>
     /// Automated HTTP-based token capture for Zerodha OAuth without WebView2 dependencies

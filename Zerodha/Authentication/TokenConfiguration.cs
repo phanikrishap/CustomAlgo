@@ -1,7 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using CustomAlgo.Utilities;
 
-namespace CustomAlgo.Authentication
+namespace CustomAlgo.Zerodha.Authentication
 {
     /// <summary>
     /// Configuration model for Zerodha token automation
@@ -32,14 +33,22 @@ namespace CustomAlgo.Authentication
         public string LastAccessToken { get; set; } = string.Empty;
 
         /// <summary>
-        /// Checks if the current token is expired
+        /// Checks if the current token is expired based on time and date
         /// </summary>
         public bool IsTokenExpired()
         {
             if (!LastTokenGenerated.HasValue || string.IsNullOrEmpty(LastAccessToken))
                 return true;
 
-            return DateTime.UtcNow - LastTokenGenerated.Value > TokenExpirationTime;
+            var currentIST = TimeHelper.NowIST;
+            var tokenGeneratedIST = TimeHelper.ToIST(LastTokenGenerated.Value);
+            
+            // Check if token was generated on a different date (using IST)
+            if (tokenGeneratedIST.Date != currentIST.Date)
+                return true;
+
+            // Check time-based expiration (using IST time)
+            return currentIST - tokenGeneratedIST > TokenExpirationTime;
         }
 
         /// <summary>

@@ -9,11 +9,11 @@ using log4net;
 using Newtonsoft.Json;
 
 using CustomAlgo.Config;
-using CustomAlgo.Authentication;
+using CustomAlgo.Zerodha.Authentication;
 using CustomAlgo.Models;
 using CustomAlgo.Utilities;
 
-namespace CustomAlgo.WebSocket
+namespace CustomAlgo.Zerodha.WebSocket
 {
     /// <summary>
     /// WebSocket client for Kite Connect WebSocket feed

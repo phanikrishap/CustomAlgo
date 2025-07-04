@@ -30,6 +30,9 @@
     <PackageReference Include="log4net" Version="2.0.17" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,18 +43,23 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Authentication\AutomatedTokenCapture.cs" />
-    <Compile Include="Authentication\BrokerTokenManager.cs" />
-    <Compile Include="Authentication\TokenConfiguration.cs" />
-    <Compile Include="Authentication\ZerodhaTokenService.cs" />
+    <Compile Include="Zerodha\Authentication\AutomatedTokenCapture.cs" />
+    <Compile Include="Zerodha\Authentication\BrokerTokenManager.cs" />
+    <Compile Include="Zerodha\Authentication\TokenConfiguration.cs" />
+    <Compile Include="Zerodha\Authentication\ZerodhaTokenService.cs" />
+    <Compile Include="Zerodha\Instruments\InstrumentData.cs" />
+    <Compile Include="Zerodha\Instruments\InstrumentsDbContext.cs" />
+    <Compile Include="Zerodha\Instruments\InstrumentsService.cs" />
+    <Compile Include="Zerodha\WebSocket\KiteWebSocketClient.cs" />
     <Compile Include="Config\BrokerConfiguration.cs" />
     <Compile Include="Demo\TokenTestOnly.cs" />
+    <Compile Include="Demo\InstrumentsDemo.cs" />
     <Compile Include="Models\TickData.cs" />
     <Compile Include="Utilities\TimeHelper.cs" />
-    <Compile Include="WebSocket\KiteWebSocketClient.cs" />
   </ItemGroup>
 
 </Project>

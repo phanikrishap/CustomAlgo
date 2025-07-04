@@ -131,6 +131,9 @@ namespace CustomAlgo.Config
         [JsonProperty("access_token_time")]
         public DateTime? AccessTokenTime { get; set; }
 
+        [JsonProperty("instrument_masters_time")]
+        public DateTime? InstrumentMastersTime { get; set; }
+
         /// <summary>
         /// Token generation timestamp (for backward compatibility)
         /// </summary>
@@ -163,6 +166,29 @@ namespace CustomAlgo.Config
 
             if (string.IsNullOrWhiteSpace(RedirectUrl))
                 throw new ArgumentException("Redirect URL is required");
+        }
+
+        /// <summary>
+        /// Checks if instrument masters data needs refresh based on date (using IST timezone)
+        /// </summary>
+        public bool IsMastersRefreshed()
+        {
+            if (!InstrumentMastersTime.HasValue)
+                return false;
+
+            var currentIST = CustomAlgo.Utilities.TimeHelper.NowIST;
+            var mastersTimeIST = CustomAlgo.Utilities.TimeHelper.ToIST(InstrumentMastersTime.Value);
+            
+            // Check if masters were updated on a different date (using IST)
+            return mastersTimeIST.Date == currentIST.Date;
+        }
+
+        /// <summary>
+        /// Updates the instrument masters timestamp
+        /// </summary>
+        public void UpdateMastersTime()
+        {
+            InstrumentMastersTime = CustomAlgo.Utilities.TimeHelper.NowIST;
         }
     }
 

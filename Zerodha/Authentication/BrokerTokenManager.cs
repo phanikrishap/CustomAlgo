@@ -4,7 +4,7 @@ using CustomAlgo.Config;
 using CustomAlgo.Utilities;
 using log4net;
 
-namespace CustomAlgo.Authentication
+namespace CustomAlgo.Zerodha.Authentication
 {
     /// <summary>
     /// High-level token manager that integrates with broker configuration
@@ -80,9 +80,18 @@ namespace CustomAlgo.Authentication
                 
                 var token = await _tokenService.ForceGenerateNewTokenAsync();
                 
+                if (string.IsNullOrEmpty(token))
+                {
+                    throw new InvalidOperationException("Token service returned null or empty token");
+                }
+                
                 // Update the broker configuration with the new token (using IST)
                 _config.KiteCredentials.AccessToken = token;
                 _config.KiteCredentials.AccessTokenTime = TimeHelper.NowIST;
+                
+                // Debug: Log the values being set
+                _logger.Debug($"[BrokerTokenManager] Setting AccessToken: {token.Substring(0, Math.Min(10, token.Length))}...");
+                _logger.Debug($"[BrokerTokenManager] Setting AccessTokenTime: {TimeHelper.FormatIST(_config.KiteCredentials.AccessTokenTime ?? DateTime.MinValue)}");
                 
                 // Save to configuration file if path provided
                 await SaveConfigurationAsync();
@@ -182,12 +191,27 @@ namespace CustomAlgo.Authentication
             try
             {
                 _logger.Debug($"[BrokerTokenManager] Saving configuration to {_configFilePath}");
+                _logger.Debug($"[BrokerTokenManager] AccessToken before save: {_config.KiteCredentials.AccessToken?.Substring(0, Math.Min(10, _config.KiteCredentials.AccessToken?.Length ?? 0))}...");
+                _logger.Debug($"[BrokerTokenManager] AccessTokenTime before save: {TimeHelper.FormatIST(_config.KiteCredentials.AccessTokenTime ?? DateTime.MinValue)}");
+                
                 await Task.Run(() => _config.SaveToFile(_configFilePath));
                 _logger.Debug("[BrokerTokenManager] Configuration saved successfully");
+                
+                // Debug: Verify the file was saved correctly
+                try
+                {
+                    var savedConfig = BrokerConfiguration.LoadFromFile(_configFilePath);
+                    _logger.Debug($"[BrokerTokenManager] Verification - AccessToken in saved file: {savedConfig?.KiteCredentials.AccessToken?.Substring(0, Math.Min(10, savedConfig?.KiteCredentials.AccessToken?.Length ?? 0))}...");
+                    _logger.Debug($"[BrokerTokenManager] Verification - AccessTokenTime in saved file: {TimeHelper.FormatIST(savedConfig?.KiteCredentials.AccessTokenTime ?? DateTime.MinValue)}");
+                }
+                catch (Exception verifyEx)
+                {
+                    _logger.Error($"[BrokerTokenManager] Failed to verify saved configuration: {verifyEx.Message}");
+                }
             }
             catch (Exception ex)
             {
-                _logger.Warn($"[BrokerTokenManager] Failed to save configuration: {ex.Message}");
+                _logger.Error($"[BrokerTokenManager] Failed to save configuration: {ex.Message}", ex);
                 // Don't throw - configuration save failure shouldn't break token functionality
             }
         }
