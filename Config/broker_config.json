@@ -8,8 +8,8 @@
     "local_port": 8001,
     "redirect_url": "http://127.0.0.1:8001/callback",
     "access_token": "Isxst2uzYsKmG7TAa02nlB1XHuejwTn6",
-    "access_token_time": "2025-07-04T17:38:56.7809846",
-    "instrument_masters_time": null
+    "access_token_time": "2025-07-04T17:59:46.359423",
+    "instrument_masters_time": "2025-07-04T17:59:49.5162091"
   },
   "instruments": [
     {

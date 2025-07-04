@@ -5,7 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>CustomAlgo.Demo.TokenTestOnly</StartupObject>
+    <StartupObject>CustomAlgo.Demo.InstrumentsDemo</StartupObject>
     <AssemblyTitle>Kite Range Algo</AssemblyTitle>
     <AssemblyDescription>Automated Zerodha Kite WebSocket Range Bar Generator</AssemblyDescription>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>

@@ -1,4 +1,4 @@
-# Kite Range Algo
+I dont # Kite Range Algo
 
 A comprehensive C# application that connects to Zerodha Kite WebSocket feed and constructs Range bars using automated token generation with advanced date-based token validation and IST timezone support.
 

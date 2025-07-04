@@ -54,8 +54,18 @@ namespace CustomAlgo.Demo
                 Console.WriteLine("📋 Loading configuration...");
                 
                 // Use absolute path to the source configuration file
-                var configPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Config", "broker_config.json");
+                var currentDir = Directory.GetCurrentDirectory();
+                Console.WriteLine($"🔍 Current working directory: {currentDir}");
+                
+                // Always try the source config first (relative from bin directory)
+                var configPath = Path.Combine(currentDir, "..", "..", "..", "Config", "broker_config.json");
                 configPath = Path.GetFullPath(configPath);
+                
+                if (!File.Exists(configPath))
+                {
+                    // Fallback to current directory
+                    configPath = Path.Combine(currentDir, "Config", "broker_config.json");
+                }
                 
                 Console.WriteLine($"📍 Using config file: {configPath}");
                 
@@ -80,12 +90,16 @@ namespace CustomAlgo.Demo
                 Console.WriteLine($"✅ Access token obtained: {MaskToken(accessToken)}");
 
                 Console.WriteLine("\n📊 Initializing Instruments service...");
+                // Database should be in Config folder as InstrumentMasters.db
+                var dbPath = Path.Combine(Path.GetDirectoryName(configPath)!, "InstrumentMasters.db");
+                Console.WriteLine($"🗄️ Database will be saved to: {dbPath}");
+                
                 instrumentsService = new InstrumentsService(
                     config.KiteCredentials.ApiKey, 
                     accessToken,
                     config,
                     configPath,
-                    Path.Combine(Directory.GetCurrentDirectory(), "Data", "instruments.db")
+                    dbPath
                 );
                 Console.WriteLine("✅ Instruments service initialized with configuration integration");
 
