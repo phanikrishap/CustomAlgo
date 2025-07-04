@@ -4,7 +4,9 @@
       "WebFetch(domain:kite.trade)",
       "Bash(cp:*)",
       "Bash(mkdir:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(sed:*)",
+      "Bash(dotnet build:*)"
     ],
     "deny": []
   }

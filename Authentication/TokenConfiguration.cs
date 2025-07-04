@@ -9,19 +9,19 @@ namespace CustomAlgo.Authentication
     public class TokenConfiguration
     {
         [Required]
-        public string ApiKey { get; set; }
+        public string ApiKey { get; set; } = string.Empty;
 
         [Required]
-        public string ApiSecret { get; set; }
+        public string ApiSecret { get; set; } = string.Empty;
 
         [Required]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         [Required]
-        public string TotpSecret { get; set; }
+        public string TotpSecret { get; set; } = string.Empty;
 
         public int LocalPort { get; set; } = 8001;
 
@@ -29,7 +29,7 @@ namespace CustomAlgo.Authentication
 
         public DateTime? LastTokenGenerated { get; set; }
 
-        public string LastAccessToken { get; set; }
+        public string LastAccessToken { get; set; } = string.Empty;
 
         /// <summary>
         /// Checks if the current token is expired

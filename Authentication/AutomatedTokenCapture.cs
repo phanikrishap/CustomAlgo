@@ -26,15 +26,15 @@ namespace CustomAlgo.Authentication
         private readonly string _totpSecret;
         private readonly int _localPort;
         private readonly string _redirectUrl;
-        private HttpListener _httpListener;
-        private string _capturedRequestToken;
+        private HttpListener? _httpListener;
+        private string? _capturedRequestToken;
         private readonly ManualResetEventSlim _tokenCaptured = new ManualResetEventSlim(false);
         private readonly CookieContainer _cookieContainer;
         private readonly ILog _logger;
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan MaxTimeout = TimeSpan.FromMinutes(2);
 
-        public AutomatedTokenCapture(string apiKey, string apiSecret, string userId, string password, string totpSecret, int localPort = 8001, string redirectUrl = null)
+        public AutomatedTokenCapture(string apiKey, string apiSecret, string userId, string password, string totpSecret, int localPort = 8001, string redirectUrl = null!)
         {
             _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
             _apiSecret = apiSecret ?? throw new ArgumentNullException(nameof(apiSecret));
@@ -108,8 +108,8 @@ namespace CustomAlgo.Authentication
                 }
 
                 // Convert captured request token to access token
-                var finalAccessToken = await GenerateAccessTokenAsync(_capturedRequestToken);
-                return !string.IsNullOrEmpty(finalAccessToken) ? finalAccessToken : _capturedRequestToken;
+                var finalAccessToken = await GenerateAccessTokenAsync(_capturedRequestToken!);
+                return !string.IsNullOrEmpty(finalAccessToken) ? finalAccessToken : _capturedRequestToken ?? string.Empty;
             }
             finally
             {
@@ -192,7 +192,7 @@ namespace CustomAlgo.Authentication
             }
         }
 
-        private async Task<string> PerformAutomatedLoginAsync()
+        private async Task<string?> PerformAutomatedLoginAsync()
         {
             try
             {
@@ -217,7 +217,7 @@ namespace CustomAlgo.Authentication
                     );
                     
                     _logger.Info($"📥 Login page response received: {loginPageResponse.StatusCode}");
-                    _logger.Info($"📍 Response URL: {loginPageResponse.RequestMessage.RequestUri}");
+                    _logger.Info($"📍 Response URL: {loginPageResponse.RequestMessage?.RequestUri}");
                     
                     var loginPageContent = await WithTimeout(
                         loginPageResponse.Content.ReadAsStringAsync(),
@@ -235,8 +235,8 @@ namespace CustomAlgo.Authentication
                     }
                     
                     // Extract hidden fields and form action
-                    var hiddenFields = ExtractHiddenFields(loginPageContent);
-                    var formAction = ExtractFormAction(loginPageContent);
+                    var hiddenFields = ExtractHiddenFields(loginPageContent!);
+                    var formAction = ExtractFormAction(loginPageContent!);
                     
                     _logger.Info($"🔍 Found {hiddenFields.Count} hidden fields");
                     foreach (var field in hiddenFields)
@@ -371,7 +371,7 @@ namespace CustomAlgo.Authentication
             return null;
         }
 
-        private async Task<string> CompleteOAuthFlowProgrammatically(string redirectUrl)
+        private async Task<string?> CompleteOAuthFlowProgrammatically(string redirectUrl)
         {
             try
             {
@@ -410,9 +410,9 @@ namespace CustomAlgo.Authentication
                     _logger.Info($"📍 Redirect {redirectCount} status: {currentResponse.StatusCode}");
                     
                     // Check if we've reached the callback URL with the token
-                    if (currentResponse.RequestMessage.RequestUri.ToString().Contains("request_token="))
+                    if (currentResponse.RequestMessage?.RequestUri?.ToString().Contains("request_token=") == true)
                     {
-                        var finalUrl = currentResponse.RequestMessage.RequestUri.ToString();
+                        var finalUrl = currentResponse.RequestMessage?.RequestUri?.ToString() ?? string.Empty;
                         _logger.Info($"📍 Final URL after redirects: {MaskUrl(finalUrl)}");
                         
                         var token = ExtractTokenFromUrl(finalUrl);
@@ -482,7 +482,7 @@ namespace CustomAlgo.Authentication
             }
         }
 
-        private async Task<string> GenerateAccessTokenAsync(string requestToken)
+        private async Task<string?> GenerateAccessTokenAsync(string requestToken)
         {
             try
             {
@@ -703,10 +703,10 @@ namespace CustomAlgo.Authentication
             var request = context.Request;
             var response = context.Response;
 
-            var query = request.Url.Query;
+            var query = request.Url?.Query ?? string.Empty;
             if (query.Contains("request_token="))
             {
-                var requestToken = ExtractTokenFromUrl(request.Url.ToString());
+                var requestToken = ExtractTokenFromUrl(request.Url?.ToString() ?? string.Empty);
                 if (!string.IsNullOrEmpty(requestToken))
                 {
                     _capturedRequestToken = requestToken;
@@ -759,4 +759,4 @@ namespace CustomAlgo.Authentication
             StopLocalServer();
         }
     }
-} 
+}

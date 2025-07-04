@@ -12,24 +12,24 @@ namespace CustomAlgo.Config
     public class BrokerConfiguration
     {
         [JsonProperty("kite_credentials")]
-        public KiteCredentials KiteCredentials { get; set; }
+        public required KiteCredentials KiteCredentials { get; set; }
 
         [JsonProperty("instruments")]
         public List<InstrumentConfig> Instruments { get; set; } = new List<InstrumentConfig>();
 
         [JsonProperty("websocket_settings")]
-        public WebSocketSettings WebSocketSettings { get; set; }
+        public required WebSocketSettings WebSocketSettings { get; set; } = new WebSocketSettings();
 
         [JsonProperty("token_settings")]
-        public TokenSettings TokenSettings { get; set; }
+        public required TokenSettings TokenSettings { get; set; } = new TokenSettings();
 
         [JsonProperty("logging")]
-        public LoggingSettings Logging { get; set; }
+        public required LoggingSettings Logging { get; set; } = new LoggingSettings();
 
         /// <summary>
         /// Loads configuration from JSON file
         /// </summary>
-        public static BrokerConfiguration LoadFromFile(string filePath)
+        public static BrokerConfiguration? LoadFromFile(string filePath)
         {
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"Configuration file not found: {filePath}");
@@ -37,7 +37,7 @@ namespace CustomAlgo.Config
             var json = File.ReadAllText(filePath);
             var config = JsonConvert.DeserializeObject<BrokerConfiguration>(json);
             
-            config.Validate();
+            config?.Validate();
             return config;
         }
 
@@ -68,8 +68,10 @@ namespace CustomAlgo.Config
                 instrument.Validate();
             }
 
-            WebSocketSettings?.Validate();
-            TokenSettings?.Validate();
+            WebSocketSettings.Validate();
+            TokenSettings.Validate();
+            
+            // Logging settings are optional and have defaults
         }
 
         /// <summary>
@@ -80,10 +82,10 @@ namespace CustomAlgo.Config
             return $"API Key: {MaskValue(KiteCredentials?.ApiKey)}, " +
                    $"User ID: {KiteCredentials?.UserId}, " +
                    $"Instruments: {Instruments?.Count ?? 0}, " +
-                   $"WebSocket: {WebSocketSettings?.Endpoint}";
+                   $"WebSocket: {WebSocketSettings.Endpoint}";
         }
 
-        private static string MaskValue(string value)
+        private static string MaskValue(string? value)
         {
             if (string.IsNullOrEmpty(value) || value.Length <= 8)
                 return "****";
@@ -99,23 +101,23 @@ namespace CustomAlgo.Config
     {
         [JsonProperty("api_key")]
         [Required]
-        public string ApiKey { get; set; }
+        public required string ApiKey { get; set; }
 
         [JsonProperty("api_secret")]
         [Required]
-        public string ApiSecret { get; set; }
+        public required string ApiSecret { get; set; }
 
         [JsonProperty("user_id")]
         [Required]
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         [JsonProperty("password")]
         [Required]
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         [JsonProperty("totp_secret")]
         [Required]
-        public string TotpSecret { get; set; }
+        public required string TotpSecret { get; set; }
 
         [JsonProperty("local_port")]
         public int LocalPort { get; set; } = 8001;
@@ -124,7 +126,7 @@ namespace CustomAlgo.Config
         public string RedirectUrl { get; set; } = "http://127.0.0.1:8001/callback";
 
         [JsonProperty("access_token")]
-        public string AccessToken { get; set; }
+        public string AccessToken { get; set; } = string.Empty;
 
         [JsonProperty("access_token_time")]
         public DateTime? AccessTokenTime { get; set; }
@@ -173,7 +175,7 @@ namespace CustomAlgo.Config
         public int Token { get; set; }
 
         [JsonProperty("symbol")]
-        public string Symbol { get; set; }
+        public required string Symbol { get; set; }
 
         [JsonProperty("mode")]
         public string Mode { get; set; } = "ltp";
@@ -190,7 +192,7 @@ namespace CustomAlgo.Config
                 throw new ArgumentException($"Invalid subscription mode: {Mode}. Valid modes: ltp, quote, full");
         }
 
-        private bool IsValidMode(string mode)
+        private static bool IsValidMode(string? mode)
         {
             return mode?.ToLower() switch
             {

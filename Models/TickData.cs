@@ -96,22 +96,22 @@ namespace CustomAlgo.Models
         /// <summary>
         /// Market depth data (buy orders)
         /// </summary>
-        public MarketDepth[] BuyOrders { get; set; }
+        public MarketDepth[] BuyOrders { get; set; } = Array.Empty<MarketDepth>();
 
         /// <summary>
         /// Market depth data (sell orders)
         /// </summary>
-        public MarketDepth[] SellOrders { get; set; }
+        public MarketDepth[] SellOrders { get; set; } = Array.Empty<MarketDepth>();
 
         /// <summary>
         /// Gets the symbol from configured instruments (if available)
         /// </summary>
-        public string Symbol { get; set; }
+        public string Symbol { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets the subscription mode for this tick
         /// </summary>
-        public string Mode { get; set; }
+        public string Mode { get; set; } = string.Empty;
 
         /// <summary>
         /// Calculates the spread (difference between ask and bid)
@@ -203,7 +203,7 @@ namespace CustomAlgo.Models
         public uint Volume { get; set; }
         public DateTime Timestamp { get; set; }
         public uint InstrumentToken { get; set; }
-        public string Symbol { get; set; }
+        public string Symbol { get; set; } = string.Empty;
 
         /// <summary>
         /// Updates OHLC with new price data

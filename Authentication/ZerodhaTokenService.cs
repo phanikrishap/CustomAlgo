@@ -13,7 +13,7 @@ namespace CustomAlgo.Authentication
         private readonly TokenConfiguration _configuration;
         private readonly ILog _logger;
 
-        public ZerodhaTokenService(TokenConfiguration configuration, ILog logger = null)
+        public ZerodhaTokenService(TokenConfiguration configuration, ILog logger = null!)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? LogManager.GetLogger(typeof(ZerodhaTokenService));
@@ -226,4 +226,4 @@ namespace CustomAlgo.Authentication
             }
         }
     }
-} 
+}

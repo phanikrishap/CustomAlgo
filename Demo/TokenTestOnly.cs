@@ -42,8 +42,8 @@ namespace CustomAlgo.Demo
 
         public static async Task RunTokenTest()
         {
-            BrokerConfiguration config = null;
-            BrokerTokenManager tokenManager = null;
+            BrokerConfiguration? config = null;
+            BrokerTokenManager? tokenManager = null;
 
             try
             {
@@ -57,6 +57,12 @@ namespace CustomAlgo.Demo
                 }
 
                 config = BrokerConfiguration.LoadFromFile(configPath);
+                if (config == null)
+                {
+                    Console.WriteLine("❌ Failed to load configuration");
+                    return;
+                }
+                
                 Console.WriteLine($"✅ Configuration loaded: {config.ToMaskedString()}");
 
                 Console.WriteLine("\n🔐 Creating token manager...");

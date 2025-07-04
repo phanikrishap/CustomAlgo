@@ -5,7 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>CustomAlgo.Demo.CustomAlgoDemo</StartupObject>
+    <StartupObject>CustomAlgo.Demo.TokenTestOnly</StartupObject>
     <AssemblyTitle>Kite Range Algo</AssemblyTitle>
     <AssemblyDescription>Automated Zerodha Kite WebSocket Range Bar Generator</AssemblyDescription>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -48,7 +48,6 @@
     <Compile Include="Authentication\TokenConfiguration.cs" />
     <Compile Include="Authentication\ZerodhaTokenService.cs" />
     <Compile Include="Config\BrokerConfiguration.cs" />
-    <Compile Include="Demo\CustomAlgoDemo.cs" />
     <Compile Include="Demo\TokenTestOnly.cs" />
     <Compile Include="Models\TickData.cs" />
     <Compile Include="Utilities\TimeHelper.cs" />

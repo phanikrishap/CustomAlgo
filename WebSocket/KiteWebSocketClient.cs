@@ -25,20 +25,20 @@ namespace CustomAlgo.WebSocket
         private readonly BrokerTokenManager _tokenManager;
         private readonly ILog _logger;
         
-        private ClientWebSocket _webSocket;
-        private CancellationTokenSource _cancellationTokenSource;
-        private Task _receiveTask;
+        private ClientWebSocket? _webSocket;
+        private CancellationTokenSource? _cancellationTokenSource;
+        private Task? _receiveTask;
         private bool _isConnected;
         private int _reconnectAttempts;
 
         // Events for data handling
-        public event Action<TickData> OnTickReceived;
-        public event Action<string> OnTextMessageReceived;
-        public event Action<string> OnError;
-        public event Action OnConnected;
-        public event Action OnDisconnected;
+        public event Action<TickData>? OnTickReceived;
+        public event Action<string>? OnTextMessageReceived;
+        public event Action<string>? OnError;
+        public event Action? OnConnected;
+        public event Action? OnDisconnected;
 
-        public KiteWebSocketClient(BrokerConfiguration config, BrokerTokenManager tokenManager, ILog logger = null)
+        public KiteWebSocketClient(BrokerConfiguration config, BrokerTokenManager tokenManager, ILog logger = null!)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _tokenManager = tokenManager ?? throw new ArgumentNullException(nameof(tokenManager));
@@ -179,11 +179,11 @@ namespace CustomAlgo.WebSocket
             var json = JsonConvert.SerializeObject(subscriptionMessage);
             var bytes = Encoding.UTF8.GetBytes(json);
 
-            await _webSocket.SendAsync(
+            await _webSocket!.SendAsync(
                 new ArraySegment<byte>(bytes),
                 WebSocketMessageType.Text,
                 true,
-                _cancellationTokenSource.Token);
+                _cancellationTokenSource!.Token);
 
             _logger.Debug($"[KiteWebSocket] Sent subscription: {json}");
         }
@@ -197,11 +197,11 @@ namespace CustomAlgo.WebSocket
             
             try
             {
-                while (_isConnected && _webSocket.State == WebSocketState.Open)
+                while (_isConnected && _webSocket?.State == WebSocketState.Open)
                 {
-                    var result = await _webSocket.ReceiveAsync(
+                    var result = await _webSocket!.ReceiveAsync(
                         new ArraySegment<byte>(buffer),
-                        _cancellationTokenSource.Token);
+                        _cancellationTokenSource!.Token);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
@@ -237,7 +237,7 @@ namespace CustomAlgo.WebSocket
         /// <summary>
         /// Processes received WebSocket message
         /// </summary>
-        private async Task ProcessReceivedMessage(byte[] buffer, WebSocketReceiveResult result)
+        private Task ProcessReceivedMessage(byte[] buffer, WebSocketReceiveResult result)
         {
             try
             {
@@ -262,12 +262,14 @@ namespace CustomAlgo.WebSocket
             {
                 _logger.Error("[KiteWebSocket] Error processing message", ex);
             }
+            
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Parses binary tick data from Kite WebSocket
         /// </summary>
-        private TickData ParseBinaryTickData(byte[] buffer, int length)
+        private TickData? ParseBinaryTickData(byte[] buffer, int length)
         {
             try
             {

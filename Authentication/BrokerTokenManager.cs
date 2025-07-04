@@ -17,7 +17,7 @@ namespace CustomAlgo.Authentication
         private readonly ILog _logger;
         private readonly string _configFilePath;
 
-        public BrokerTokenManager(BrokerConfiguration config, ILog logger = null, string configFilePath = null)
+        public BrokerTokenManager(BrokerConfiguration config, ILog logger = null!, string configFilePath = null!)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? LogManager.GetLogger(typeof(BrokerTokenManager));
@@ -182,7 +182,7 @@ namespace CustomAlgo.Authentication
             try
             {
                 _logger.Debug($"[BrokerTokenManager] Saving configuration to {_configFilePath}");
-                _config.SaveToFile(_configFilePath);
+                await Task.Run(() => _config.SaveToFile(_configFilePath));
                 _logger.Debug("[BrokerTokenManager] Configuration saved successfully");
             }
             catch (Exception ex)
@@ -206,11 +206,11 @@ namespace CustomAlgo.Authentication
             try
             {
                 _logger.Debug($"[BrokerTokenManager] Loading configuration from {_configFilePath}");
-                var loadedConfig = BrokerConfiguration.LoadFromFile(_configFilePath);
+                var loadedConfig = await Task.Run(() => BrokerConfiguration.LoadFromFile(_configFilePath));
                 
                 // Update current config with loaded values (especially access token)
-                _config.KiteCredentials.AccessToken = loadedConfig.KiteCredentials.AccessToken;
-                _config.KiteCredentials.AccessTokenTime = loadedConfig.KiteCredentials.AccessTokenTime;
+                _config.KiteCredentials.AccessToken = loadedConfig?.KiteCredentials?.AccessToken ?? string.Empty;
+                _config.KiteCredentials.AccessTokenTime = loadedConfig?.KiteCredentials?.AccessTokenTime;
                 
                 _logger.Debug("[BrokerTokenManager] Configuration loaded successfully");
                 return true;
@@ -241,8 +241,8 @@ namespace CustomAlgo.Authentication
     /// </summary>
     public class AuthenticationDetails
     {
-        public string ApiKey { get; set; }
-        public string AccessToken { get; set; }
+        public string ApiKey { get; set; } = string.Empty;
+        public string AccessToken { get; set; } = string.Empty;
         public DateTime TokenGeneratedAt { get; set; }
         
         /// <summary>
