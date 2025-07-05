@@ -7,8 +7,8 @@
     "totp_secret": "3YESDFJ2CRJ2BAXMHLZFEKMEVU3TCLHU",
     "local_port": 8001,
     "redirect_url": "http://127.0.0.1:8001/callback",
-    "access_token": "Isxst2uzYsKmG7TAa02nlB1XHuejwTn6",
-    "access_token_time": "2025-07-04T17:59:46.359423",
+    "access_token": "MvMF6DxDK7DWw2uM7xBejgm5C5YDXYW1",
+    "access_token_time": "2025-07-05T08:06:42.2004597",
     "instrument_masters_time": "2025-07-04T17:59:49.5162091"
   },
   "instruments": [

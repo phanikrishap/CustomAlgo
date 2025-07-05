@@ -5,7 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>CustomAlgo.Demo.InstrumentsDemo</StartupObject>
+    <StartupObject>CustomAlgo.Demo.NinjatraderTickDataDemo</StartupObject>
     <AssemblyTitle>Kite Range Algo</AssemblyTitle>
     <AssemblyDescription>Automated Zerodha Kite WebSocket Range Bar Generator</AssemblyDescription>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -39,6 +39,9 @@
     <None Update="Config\broker_config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Demo\NinjatraderTickData\NIFTY_I.Last.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -58,8 +61,15 @@
     <Compile Include="Config\BrokerConfiguration.cs" />
     <Compile Include="Demo\TokenTestOnly.cs" />
     <Compile Include="Demo\InstrumentsDemo.cs" />
+    <Compile Include="Demo\CustomAlgoDemo.cs" />
+    <Compile Include="Demo\NinjatraderTickDataDemo.cs" />
+    <Compile Include="Demo\NinjatraderTickData\NinjatraderTickData.cs" />
+    <Compile Include="Demo\NinjatraderTickData\MinuteBarAggregator.cs" />
+    <Compile Include="Demo\NinjatraderTickData\RangeATRBar.cs" />
+    <Compile Include="Demo\NinjatraderTickData\CsvExporter.cs" />
     <Compile Include="Models\TickData.cs" />
     <Compile Include="Utilities\TimeHelper.cs" />
+    <Compile Include="GlobalUsings.cs" />
   </ItemGroup>
 
 </Project>
